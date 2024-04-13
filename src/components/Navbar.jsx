@@ -9,10 +9,10 @@ const  Navbar = ({wallet, isSignedIn}) =>{
     <div className="container-fluid navbar-expand-lg">
       <a href="/"><img src={logo} alt="Near" height="40" className="d-inline-block align-text-top" /></a>
       <div className='navbar-nav pt-1'>
-      {isSignedIn
-            ? <button  className="btn btn-secondary" onClick={signOut}>Logout {wallet.accountId}</button>
-            : <button className="btn btn-secondary" onClick={signIn}>Login</button>
-      }
+        {isSignedIn
+          ? <button  className="btn btn-secondary" onClick={signOut}>Logout {wallet.accountId}</button>
+          : <button className="btn btn-secondary" onClick={signIn}>Login</button>
+        }
       </div>
     </div>
   </nav>)
