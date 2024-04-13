@@ -3,6 +3,7 @@ import { bytesToHex } from '@ethereumjs/util';
 import { FeeMarketEIP1559Transaction } from '@ethereumjs/tx';
 import { deriveChildPublicKey, najPublicKeyStrToUncompressedHexPoint, uncompressedHexPointToEvmAddress } from '../services/kdf';
 import { Common } from '@ethereumjs/common'
+import { erc721abi } from "./erc721abi";
 
 export class Ethereum {
   constructor(chain_rpc, chain_id) {
@@ -35,6 +36,16 @@ export class Ethereum {
     // Get the nonce & gas price
     const nonce = await this.web3.eth.getTransactionCount(sender);
     const { maxFeePerGas, maxPriorityFeePerGas } = await this.queryGasPrice();
+
+    const method = "safeTransferFrom"
+    const from = "0x1a887898ca5210ba42ca78654f0dd7b319cfbb20"
+    const to = "0x0f7c560fd7014cbbaf7a9c41565d1d8cf718a112"
+    const nftId = 3
+    const nftContractAddy = "0xAEF7A38B35277B3060321A1A1044CCe53585B59a"
+
+    // I want to encode the function calldata for the ERC721 contract
+    const contract = new this.web3.eth.Contract(erc721abi, nftContractAddy);
+    const data = contract.methods[method](from, to, nftId).encodeABI();
     
     // Construct transaction
     const transactionData = {
@@ -43,8 +54,9 @@ export class Ethereum {
       maxFeePerGas,
       maxPriorityFeePerGas,
       to: receiver,
-      value: BigInt(this.web3.utils.toWei(amount, "ether")),
+      value: 0,
       chain: this.chain_id,
+      data
     };
 
     // Return the message hash
@@ -56,7 +68,16 @@ export class Ethereum {
   async requestSignatureToMPC(wallet, contractId, path, ethPayload, transaction, sender) {
     // Ask the MPC to sign the payload
     const payload = Array.from(ethPayload.reverse());
-    const request = await wallet.callMethod({ contractId, method: 'sign', args: { payload, path, key_version: 0 }, gas: '250000000000000' });
+    // contractId is my contract
+    // payload will have trasnferFrom
+    // path is the derivation path of contract (ETH or BTC account)
+    // method will be the function that will call the MPC in my contract
+    const request = await wallet.callMethod({
+      contractId: "cagnazz5.testnet",
+      method: 'mpc_call_transfer_jpeg',
+      args: { payload, path: "test", key_version: 0 },
+      gas: '250000000000000'
+    });
     const [big_r, big_s] = await wallet.getTransactionResult(request.transaction.hash);
 
     // reconstruct the signature
