@@ -25,14 +25,17 @@ npm run dev # or yarn dev
 > Chain Signatures are currently in `alpha` and should only be used in a `testnet` environment.
 
 
-## TODO
+## LINKS
 da fe
-- derive eth/btc accounts from near accounts (and contract)
+- OK | derive eth/btc accounts from near accounts (and contract)
 - fare transfer nft e ordinal con nearSdk
 - call contract createOrder, acceptOrder, finalizaNft, finalizeOrdinal
+  - OK | createOrder
+  - acceptOrder
 
 at the end:
-- static pics of NFT milady e aeons e Ordinals puppets e nodeMonkeys
-- deploy NFT su testnets
-- mockare tu hai xyz nft e ordinals
-- mockare ordersList
+- OK | deploy NFT su testnets
+  - nft on sepolia eth testnet https://sepolia.etherscan.io/address/0xaef7a38b35277b3060321a1a1044cce53585b59a#code
+  - ordinal on btc testnet
+    - https://testnet.unisat.io/inscription/0f7ea6b3f6b82c8fe8d1d4e7c570292c4a77e0e43e157f0d6fa6bbc813bd2aeai0
+    - https://testnet.unisat.io/inscription/cb1c55e76d0ae3cf782947e5463c3db5607252ae4ce5ee14ae11806b2c5b8364i0

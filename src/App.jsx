@@ -7,24 +7,49 @@ import { BitcoinView } from "./components/Bitcoin";
 import ethSvg from "/eth-logo.svg"
 import btcSvg from "/btc-logo.svg"
 import arrowsSvg from "/arrows.svg"
+import miladyPng from "/milady.png"
+import puppetPng from "/puppet.png"
 
 // CONSTANTS
 const MPC_CONTRACT = 'multichain-testnet-2.testnet';
 
+const OUR_CONTRACT_ID = 'cagnazz2.testnet';
+
 // NEAR WALLET
 const wallet = new Wallet({ network: 'testnet', createAccessKeyFor: MPC_CONTRACT });
 
+  // type Order = {
+  //   id: number;
+
+  //   owner: string; // Lisa NEAR-ETH account
+  //   accepter: string; // Bart NEAR-BTC account
+  
+  //   ownerAssetType: string;
+  //   ownerAssetId: string;
+  //   ownerAssetCollectionName: string;
+
+  //   accepterAssetType: string;
+  //   accepterAssetId: string;
+  //   accepterAssetCollectionName: string;
+  // };
+
 function App() {
-  const [selectedOrder, setSelectedOrder] = useState(); // [order: Order
+  // const queryParams = new URLSearchParams(window.location.search);
+  // const txHashes = queryParams.get("transactionHashes");
+  // console.log("queryParams", txHashes);
+
+  const [selectedOrder, setSelectedOrder] = useState(); // [order: Order]
   const [swapType, setSwapType] = useState(true); // [true == "eth-2-btc", false == "btc-2-eth"]
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [status, setStatus] = useState("Please login to request a signature");
   const [chain, setChain] = useState('eth');
+  const [ordersList, setOrdersList] = useState([]);
 
   useEffect(() => {
     const initFunction = async () => {
       const isSignedIn = await wallet.startUp();
       setIsSignedIn(isSignedIn);
+      await getContractOrders();
     }
 
     initFunction();
@@ -35,51 +60,22 @@ function App() {
     setSelectedOrder(order);
   } 
 
-  // type Order = order: {
-  //   id: number;
-
-  //   owner: string; // Lisa NEAR-ETH account
-  //   ownerSubaccount: string; // Lisa NEAR-ETH Escrow subaccount
-  //   ownerReceiver: string; // Lisa NEAR-BTC account
-
-  //   accepter: string; // Bart NEAR-BTC account
-  //   accepterSubaccount: string; // Bart NEAR-BTC Escrow subaccount
-  //   accepterReceiver: string; // Bart NEAR-ETH account
-
-  //   ownerAssetType: string;
-  //   ownerAssetId: string;
-  //   ownerAssetCollectionName: string;
-
-  //   accepterAssetType: string;
-  //   accepterAssetId: string;
-  //   accepterAssetCollectionName: string;
-  // };
-  const ordersList = [
-    { 
-      id: 1,
-
-      owner: "lisa.near.eth",
-      ownerSubaccount: "lisa.escrow.eth",
-      ownerReceiver: "lisa.near.btc",
-      
-      accepter: "bart.near.btc",
-      accepterSubaccount: "bart.escrow.btc",
-      accepterReceiver: "bart.near.eth",
-
-      ownerAssetType: "NFT",
-      ownerAssetId: "NFT_1",
-      ownerAssetCollectionName: "NFT Collection 1",
-
-      accepterAssetType: "Ordinal",
-      accepterAssetId: "Ordinal_1",
-      accepterAssetCollectionName: "Ordinal Collection 1"
-    },
-  ]
-
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Creating swap...");
+    console.log("Creating order...");
+    const createOrder = await wallet.callMethod({ contractId: OUR_CONTRACT_ID, method: "createOrder", args: {
+      ownerAssetType: swapType ? "NFT" : "Ordinal",
+      ownerAssetId: selectedOrder.ownerAssetId,
+      ownerAssetCollectionName: selectedOrder.ownerAssetCollectionName,
+      accepterAssetType: swapType ? "Ordinal" : "NFT",
+      accepterAssetId: selectedOrder.accepterAssetId,
+      accepterAssetCollectionName: selectedOrder.accepterAssetCollectionName,
+    }});
+    console.log("result call", createOrder);
+
+    await getContractOrders();
+    
   }
 
   const onChangeOrder = (field, value) => {
@@ -89,12 +85,20 @@ function App() {
     }));
   }
 
+  const getContractOrders = async () => {
+    console.log("Getting orders...");
+    const newOrdersList = await wallet.viewMethod({ contractId: OUR_CONTRACT_ID, method: "getOrders", args: {}});
+    console.log("orders: ", newOrdersList);
+    setOrdersList(newOrdersList);
+  }
+
   return (
     <>
       <Navbar wallet={wallet} isSignedIn={isSignedIn}></Navbar>
 
       <div className="container-fluid mt-5 px-4">
         <div className="row">
+          {/* <!-- List of orders --> */}
           <div className="col-6">
             <h4 className="h4">Orders</h4>
             <div className="overflow-auto" style={{maxHeight: "80vh"}}>
@@ -111,22 +115,22 @@ function App() {
                       </div>
                       <div className="row align-middle">
                         <div className="col text-center">
-                          <img src={ethSvg} alt="Ethereum" className="mb-2" style={{ width: "24px"}} />
+                          <img src={order.ownerAssetType === "NFT" ? ethSvg : btcSvg} alt="Ethereum" className="mb-2" style={{ width: "24px"}} />
                         </div>
                         <div className="col text-center"></div>
                         <div className="col text-center">
-                          <img src={btcSvg} alt="Bitcoin" className="mb-2" style={{width: "24px"}} />
+                          <img src={order.accepterAssetType === "NFT" ? ethSvg : btcSvg} alt="Bitcoin" className="mb-2" style={{width: "24px"}} />
                         </div>
                       </div>
                       <div className="row align-middle">
                         <div className="col text-center">
-                          <img src="https://via.placeholder.com/150" alt="NFT input image" className="card-img-top mb-2" style={{maxWidth: "100px"}} />
+                          <img src={order.ownerAssetType ==="NFT" ? miladyPng : puppetPng} alt="NFT input image" className="card-img-top mb-2" style={{maxWidth: "100px"}} />
                         </div>
                         <div className="col text-center align-middle">
                           <img src={arrowsSvg} alt="Swap arrows img" style={{ width: "50px" }} className="align-middle" />
                         </div>
                         <div className="col text-center">
-                          <img src="https://via.placeholder.com/150" alt="NFT input image" className="card-img-top mb-2" style={{maxWidth: "100px"}} />
+                          <img src={order.accepterAssetType ==="NFT" ? miladyPng : puppetPng} alt="NFT input image" className="card-img-top mb-2" style={{maxWidth: "100px"}} />
                         </div>
                       </div>
                       <div className="row">
@@ -148,8 +152,9 @@ function App() {
               )) : null}
             </div>
           </div>
+          {/* <!-- Create Order form --> */}
           <div className="col-6">
-            <h4 className="h4">Create Swap</h4>
+            <h4 className="h4">Create Order</h4>
             <form className="" onSubmit={onSubmit}>
               <div className="form-check form-switch">
                 <input className="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" onChange={() => setSwapType(s => !s)} />
@@ -203,16 +208,6 @@ function App() {
                     />
                 </div>
 
-                <div className="input-group input-group-sm my-6">
-                  <span className="input-group-text" id="receiverAddress">
-                    {swapType ? "BTC " : "ETH "}Receiver Address
-                  </span>
-                  <input
-                    type="text" name="receiverAddress" className="form-control" aria-describedby="receiverAddress"
-                    defaultValue={selectedOrder ? selectedOrder.ownerReceiver : ""}
-                    onChange={e => onChangeOrder("ownerReceiver", e.target.value)}
-                    />
-                </div>
               </div>
 
               <button type="submit" className="btn btn-primary">Create Order</button>
