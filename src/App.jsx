@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import Navbar from "./components/Navbar"
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import { Wallet } from "./services/near-wallet";
 import { EthereumView } from "./components/Ethereum";
 import { BitcoinView } from "./components/Bitcoin";
 
 import ethSvg from "/eth-logo.svg"
 import btcSvg from "/btc-logo.svg"
-import arrowsSvg from "/arrows.svg"
+import arrowsSvg from "/transfer.png"
 import miladyPng from "/milady.png"
 import puppetPng from "/puppet.png"
 
@@ -63,6 +64,11 @@ function App() {
   const onSubmit = async (e) => {
     e.preventDefault();
 
+    if (!selectedOrder || !selectedOrder.ownerAssetId || !selectedOrder.ownerAssetCollectionName || !selectedOrder.accepterAssetId || !selectedOrder.accepterAssetCollectionName) {
+      console.error("createOrder: missing fields");
+      return;
+    }
+
     console.log("Creating order...");
     const createOrder = await wallet.callMethod({ contractId: OUR_CONTRACT_ID, method: "createOrder", args: {
       ownerAssetType: swapType ? "NFT" : "Ordinal",
@@ -96,29 +102,45 @@ function App() {
     <>
       <Navbar wallet={wallet} isSignedIn={isSignedIn}></Navbar>
 
-      <div className="container-fluid mt-5 px-4">
+      <div className="container-fluid py-5 px-4" style={{backgroundColor: "#C7FF02", minHeight: "60vh"}}>
+        <div className="row">
+          <div className="col-6 text-center align-middle text-black">
+            <h1 style={{fontFamily: "Space Grotesk Variable", fontSize: "4.5rem" }}>
+              <b>JPEG</b> station
+            </h1>
+            <p style={{fontFamily: "Space Grotesk Variable", fontSize: "2rem" }}>Cross-chain swaps<br/> between NFTs and Ordinals</p>
+          </div>
+          <div className="col-6 text-center">
+            <img src="/landing-img.png" alt="JPEG station" style={{maxWidth: "50%"}} />
+          </div>
+        </div>
+      </div>
+
+      <div className="container-sm mt-5 px-4">
         <div className="row">
           {/* <!-- List of orders --> */}
-          <div className="col-6">
-            <h4 className="h4">Orders</h4>
-            <div className="overflow-auto" style={{maxHeight: "80vh"}}>
+          <div className="col-6 bg-black">
+            <h4 className="h4" style={{fontFamily: "Space Grotesk Variable", fontSize: "2rem", color: "#C7FF02" }}>Orders</h4>
+            <div className="overflow-auto px-1 " style={{maxHeight: "80vh"}}>
               {ordersList ? ordersList.map((order, index) => (
-                <div className="card" key={order.id+index}>
+                <div className="mt-6 card text-white bg-black" key={order.id+index}  style={{ border: "4px solid #C7FF02", borderRadius: "20px" }} >
                   <div className="card-body">
                     <div className="row">
                       <div className="col">
-                        <h5 className="card-title"><i className="fs-6">{order.owner}</i> has</h5>
+                        <h5 className="card-title"><span style={{ color: "#C7FF02" }}>{order.owner}</span> has</h5>
                       </div>
-                      <div className="col"></div>
+                      <div className="col text-center">
+                      <h5 className="card-title"></h5>
+                      </div>
                       <div className="col">
-                        <h5 className="card-title">Wants</h5>
+                        <h5 className="card-title">wants</h5>
                       </div>
-                      <div className="row align-middle">
+                      <div className="row align-middle text-center">
                         <div className="col text-center">
                           <img src={order.ownerAssetType === "NFT" ? ethSvg : btcSvg} alt="Ethereum" className="mb-2" style={{ width: "24px"}} />
                         </div>
                         <div className="col text-center"></div>
-                        <div className="col text-center">
+                        <div className="col text-center text-center">
                           <img src={order.accepterAssetType === "NFT" ? ethSvg : btcSvg} alt="Bitcoin" className="mb-2" style={{width: "24px"}} />
                         </div>
                       </div>
@@ -138,7 +160,7 @@ function App() {
                           <p className="card-text">{order.ownerAssetCollectionName}</p>
                         </div>
                         <div className="col text-center">
-                          <button className="btn btn-primary" onClick={() => onAcceptOrder(order)}>
+                          <button className="btn btn-primary" style={{ backgroundColor: "#C7FF02", color: "#000" }} onClick={() => onAcceptOrder(order)}>
                             Accept
                           </button>
                         </div>
@@ -154,11 +176,11 @@ function App() {
           </div>
           {/* <!-- Create Order form --> */}
           <div className="col-6">
-            <h4 className="h4">Create Order</h4>
+            <h4 className="h4" style={{fontFamily: "Space Grotesk Variable", fontSize: "2rem" }}>Create Order</h4>
             <form className="" onSubmit={onSubmit}>
               <div className="form-check form-switch">
                 <input className="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" onChange={() => setSwapType(s => !s)} />
-                <label className="form-check-label" htmlFor="switchCheckChecked">
+                <label className="form-check-label" htmlFor="switchCheckChecked" style={{color: "#fff"}}>
                   <b>{swapType ? "ETH x BTC: " : "BTC x ETH: "}</b>
                   {swapType ? "Exchange NFT (eth) for Ordinal (btc)" : "Exchange Ordinal (btc) for NFT (eth)"}
                 </label>
@@ -166,7 +188,7 @@ function App() {
               <div className="mt-4">
                 <b className="mt-4">{swapType ? "NFT" : "Ordinal"}</b>
                 <div className="input-group input-group-sm">
-                  <span className="input-group-text" id="inputCollectionId">
+                  <span className="input-group-text" id="inputCollectionId" style={{ backgroundColor: "var(--fg)", color: "#fff" }}>
                     Input{swapType ? " NFT " : " Ordinal "}ID
                   </span>
                   <input
@@ -176,7 +198,7 @@ function App() {
                     />
                 </div>
                 <div className="input-group input-group-sm mb-3">
-                  <span className="input-group-text" id="inputCollectionName">
+                  <span className="input-group-text" id="inputCollectionName" style={{ backgroundColor: "var(--fg)", color: "#fff" }}>
                     Input{swapType ? " NFT " : " Ordinal "}Name
                   </span>
                   <input
@@ -188,7 +210,7 @@ function App() {
 
                 <b className="mt-3">{swapType ? "Ordinal" : "NFT"}</b>
                 <div className="input-group input-group-sm">
-                  <span className="input-group-text" id="outputCollection">
+                  <span className="input-group-text" id="outputCollection" style={{ backgroundColor: "var(--fg)", color: "#fff" }}>
                     Receive{swapType ? " Ordinal " : " NFT "}ID
                   </span>
                   <input
@@ -198,7 +220,7 @@ function App() {
                     />
                 </div>
                 <div className="input-group input-group-sm mb-3">
-                  <span className="input-group-text" id="outputCollection">
+                  <span className="input-group-text" id="outputCollection" style={{ backgroundColor: "var(--fg)", color: "#fff" }}>
                     Receive{swapType ? " Ordinal " : " NFT "}Name
                   </span>
                   <input
@@ -210,7 +232,7 @@ function App() {
 
               </div>
 
-              <button type="submit" className="btn btn-primary">Create Order</button>
+              <button type="submit" className="btn btn-primary" style={{ backgroundColor: "#C7FF02", color: "#000" }} >Create Order</button>
             </form>
           </div>
         </div>
@@ -226,11 +248,11 @@ function App() {
           <div style={{ width: '50%', minWidth: '400px' }}>
 
             <div className="input-group input-group-sm mt-3 mb-3">
-              <input className="form-control text-center" type="text" value={`MPC Contract: ${MPC_CONTRACT}`} disabled />
+              <input className="form-control text-center" type="text" value={`MPC Contract: ${MPC_CONTRACT}`} disabled  style={{ backgroundColor: "var(--fg)", color: "#fff" }}/>
             </div>
 
             <div className="input-group input-group-sm my-2 mb-4">
-              <span className="text-primary input-group-text" id="chain">Chain</span>
+              <span className="input-group-text" id="chain" style={{ backgroundColor: "var(--fg)", color: "#fff" }}>Chain</span>
               <select className="form-select" aria-describedby="chain" value={chain} onChange={e => setChain(e.target.value)} >
                 <option value="eth"> Ξ Ethereum </option>
                 <option value="btc"> ₿ BTC </option>
@@ -246,6 +268,7 @@ function App() {
           <span> {status} </span>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

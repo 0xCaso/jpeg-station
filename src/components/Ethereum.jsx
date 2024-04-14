@@ -87,20 +87,20 @@ export function EthereumView({ props: { setStatus, wallet, MPC_CONTRACT } }) {
   return (
     <>
       <div className="row mb-3">
-        <label className="col-sm-2 col-form-label col-form-label-sm">From:</label>
+        <label className="col-sm-2 col-form-label col-form-label-sm" style={{ backgroundColor: "var(--fg)", color: "#fff" }}>From:</label>
         <div className="col-sm-10">
           <input type="text" className="form-control form-control-sm" value={derivation} onChange={handleDerivationChange} disabled={loading}/>
           <div className="form-text" id="eth-sender"> {senderAddress} </div>
         </div>
       </div>
       <div className="row mb-3">
-        <label className="col-sm-2 col-form-label col-form-label-sm">To:</label>
+        <label className="col-sm-2 col-form-label col-form-label-sm" style={{ backgroundColor: "var(--fg)", color: "#fff" }}>To:</label>
         <div className="col-sm-10">
           <input type="text" className="form-control form-control-sm" value={receiver} onChange={(e) => setReceiver(e.target.value)} disabled={loading}/>
         </div>
       </div>
       <div className="row mb-3">
-        <label className="col-sm-2 col-form-label col-form-label-sm">Amount:</label>
+        <label className="col-sm-2 col-form-label col-form-label-sm" style={{ backgroundColor: "var(--fg)", color: "#fff" }}>Amount:</label>
         <div className="col-sm-10">
           <input type="number" className="form-control form-control-sm" value={amount} onChange={(e) => setAmount(e.target.value)} step="0.01" disabled={loading}/>
           <div className="form-text"> Ethereum units </div>
