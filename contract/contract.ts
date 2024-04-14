@@ -1,5 +1,5 @@
 // Find all our documentation at https://docs.near.org
-import { NearBindgen, near, call, assert, NearPromise, PromiseIndex } from 'near-sdk-js';
+import { NearBindgen, near, call, assert, NearPromise, PromiseIndex, view } from 'near-sdk-js';
 
 class Order {
   id: number;
@@ -34,7 +34,7 @@ class Escrow {
   ordersVector: Array<Order> = [];
 
   @call({})
-  createOrder({
+  create_order({
     ownerAssetType,
     ownerAssetId,
     ownerAssetCollectionName,
@@ -75,7 +75,7 @@ class Escrow {
   }
 
   @call({})
-  acceptOrder({ orderId }: { orderId: number }): void {
+  accept_order({ orderId }: { orderId: number }): void {
     // HERE THE CONTRACT SHOULD CHECK THAT THE ACCEPTER HAS THE ASSET, TO BE DONE
     assert(
       !this.ordersVector[orderId].finalized,
@@ -93,40 +93,17 @@ class Escrow {
     this.ordersVector[orderId].settled = true;
   }
 
-  // @call({})
-  // finalizeOrder_transferNft({ orderId }: { orderId: number }): void {
-  //   assert(
-  //     this.ordersVector[orderId].settled,
-  //     "The order must be settled"
-  //   );
-  //   assert(
-  //     !this.ordersVector[orderId].finalized,
-  //     "The order must not be finalized"
-  //   );
-
-  //   const callerIsOwner = this.ordersVector[orderId].owner === near.predecessorAccountId();
-  //   const callerIsAccepter = this.ordersVector[orderId].accepter === near.predecessorAccountId();
-
-  //   assert(
-  //     callerIsOwner || callerIsAccepter,
-  //     "The caller must be the owner or the accepter"
-  //   );
-  //   assert(
-  //     (callerIsOwner && this.ordersVector[orderId].accepterAssetType === "NFT") ||
-  //     (callerIsAccepter && this.ordersVector[orderId].ownerAssetType === "NFT"),
-  //     "The asset to be transferred must be an NFT"
-  //   );
-
-  //   const assetIdToTransfer = callerIsOwner
-  //     ? this.ordersVector[orderId].accepterAssetId
-  //     : this.ordersVector[orderId].ownerAssetId;
-    
-  // }
-
   @call({})
-  mpc_call_transfer_jpeg({ args }:{ args: any }): NearPromise {
+  mpc_call_transfer_jpeg({ payload, path, key_version }: {
+    payload: any[],
+    path: string,
+    key_version: number
+  }): NearPromise {
+    near.log("payload", payload)
+    const argsString = JSON.stringify({ payload, path, key_version })
+    near.log("argsString", argsString)
     const promise = NearPromise.new("multichain-testnet-2.testnet")
-    .functionCall("sign", args, NO_DEPOSIT, FIVE_TGAS)
+    .functionCall("sign", argsString, NO_DEPOSIT, FIVE_TGAS)
     .then(
       NearPromise.new(near.currentAccountId())
       .functionCall("mpc_call_transfer_jpeg_callback", NO_ARGS, NO_DEPOSIT, FIVE_TGAS)
@@ -147,6 +124,10 @@ class Escrow {
     }
   }
 
+  @view({})
+  get_orders(): Array<Order> {
+    return this.ordersVector;
+  }
 }
 
 function promiseResult(): {result: string, success: boolean}{
