@@ -7,8 +7,9 @@ const  Navbar = ({wallet, isSignedIn}) =>{
     const signOut = () => { wallet.signOut() }
     return( <nav className="navbar">
     <div className="container-fluid navbar-expand-lg bg-black py-2">
-      <a href="/">
-        <img src={logo} alt="Near" height="40" className="d-inline-block align-text-top" />
+      <a href="/" style={{ color: "#fff", fontFamily: "Space Grotesk Variable", display: "flex", lineHeight: 1, alignItems: "center" }}>
+        <img src={logo} alt="Near" height="40" className="d-inline-block" />
+        <p className="mb-0 h-fit"><b>JPEG</b> station</p>
       </a>
       <div className='navbar-nav pt-1'>
         {isSignedIn
