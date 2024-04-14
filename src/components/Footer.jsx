@@ -12,12 +12,12 @@ const Footer = () =>{
           </a>
           </div>
           <div className="col-4 text-center align-middle mt-2">
-            <a href="https://github.com/0xcaso/ethdam-2024" target="_blank" style={{color: "#000"}}>
+            <a href="https://github.com/0xcaso/jpeg-station" target="_blank" style={{color: "#000"}}>
               Github
             </a>
           </div>
           <div className="col-4 text-center align-middle mt-2">
-            <a href="https://youtube.com/" target="_blank" style={{color: "#000"}}>
+            <a href="https://youtu.be/ja9H6q82f4c?si=cbi2dBjNXf2__3hA" target="_blank" style={{color: "#000"}}>
               Video demo
             </a>
           </div>
