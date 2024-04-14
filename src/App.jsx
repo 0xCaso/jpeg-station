@@ -106,13 +106,13 @@ function App() {
 
       <div className="container-fluid py-8 px-4" style={{backgroundColor: "#C7FF02", minHeight: "50vh"}}>
         <div className="row align-items-center">
-          <div className="col-6 text-center text-black h-fit">
+          <div className="col-12 col-md-6 text-center text-black h-fit">
             <h1 style={{fontFamily: "Space Grotesk Variable", fontSize: "4.5rem" }}>
               <b>JPEG</b> station
             </h1>
             <p style={{fontFamily: "Space Grotesk Variable", fontSize: "2rem" }}>Cross-chain swaps<br/> between NFTs and Ordinals</p>
           </div>
-          <div className="col-6 text-center">
+          <div className="col-12 col-md-6 text-center">
             <img src="/landing-img.png" alt="JPEG station" style={{maxWidth: "50%"}} />
           </div>
         </div>
@@ -121,7 +121,7 @@ function App() {
       <div className="container-sm my-5 px-4">
         <div className="row">
           {/* <!-- List of orders --> */}
-          <div className="col-6 bg-black" style={{ padding: "2em" }}>
+          <div className="col-12 col-md-6 bg-black" style={{ padding: "2em" }}>
             <h4 className="h4" style={{fontFamily: "Space Grotesk Variable", fontSize: "2rem", color: "#F64740" }}>Orders</h4>
             <div className="overflow-auto px-1 " style={{ maxHeight: "80vh", scrollbarColor: "#C7FF02 #324002" }}>
               {ordersList ? ordersList.map((order, index) => (
@@ -177,7 +177,7 @@ function App() {
             </div>
           </div>
           {/* <!-- Create Order form --> */}
-          <div className="col-6" style={{ padding: "2em" }}>
+          <div className="col-12 col-md-6" style={{ padding: "2em" }}>
             <h4 className="h4" style={{fontFamily: "Space Grotesk Variable", fontSize: "2rem", color: "#F64740" }}>Create Order</h4>
             <form className="" onSubmit={onSubmit}>
               <div className="form-check form-switch">
