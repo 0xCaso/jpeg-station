@@ -14,7 +14,7 @@ import puppetPng from "/puppet.png"
 // CONSTANTS
 const MPC_CONTRACT = 'multichain-testnet-2.testnet';
 
-const OUR_CONTRACT_ID = 'cagnazz5.testnet';
+const OUR_CONTRACT_ID = 'cagnazz6.testnet';
 
 // NEAR WALLET
 const wallet = new Wallet({ network: 'testnet', createAccessKeyFor: MPC_CONTRACT });
