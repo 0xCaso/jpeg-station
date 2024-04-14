@@ -35,22 +35,24 @@ const wallet = new Wallet({ network: 'testnet', createAccessKeyFor: MPC_CONTRACT
   // };
 
 function App() {
-  // const queryParams = new URLSearchParams(window.location.search);
-  // const txHashes = queryParams.get("transactionHashes");
-  // console.log("queryParams", txHashes);
-
   const [selectedOrder, setSelectedOrder] = useState(); // [order: Order]
   const [swapType, setSwapType] = useState(true); // [true == "eth-2-btc", false == "btc-2-eth"]
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [status, setStatus] = useState("Please login to request a signature");
   const [chain, setChain] = useState('eth');
   const [ordersList, setOrdersList] = useState([]);
+  const [requestSignatureTxHash, setRequestSignatureTxHash] = useState();
 
   useEffect(() => {
     const initFunction = async () => {
       const isSignedIn = await wallet.startUp();
       setIsSignedIn(isSignedIn);
       await getContractOrders();
+      const queryParams = new URLSearchParams(window.location.search);
+      const txHash = queryParams.get("transactionHashes");
+      if (txHash) {
+        setRequestSignatureTxHash(txHash);
+      }
     }
 
     initFunction();
@@ -264,7 +266,17 @@ function App() {
               </select>
             </div>
 
-            {chain === 'eth' && <EthereumView props={{ setStatus, wallet, MPC_CONTRACT }} />}
+            {
+              chain === 'eth' &&
+              <EthereumView
+                props={{
+                  setStatus,
+                  wallet,
+                  MPC_CONTRACT,
+                  requestSignatureTxHash,
+                }}
+              />
+            }
             {chain === 'btc' && <BitcoinView props={{ setStatus, wallet, MPC_CONTRACT }} />}
           </div>
         }

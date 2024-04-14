@@ -6,7 +6,12 @@ import PropTypes from 'prop-types';
 const Sepolia = 11155111;
 const Eth = new Ethereum('https://rpc2.sepolia.org', Sepolia);
 
-export function EthereumView({ props: { setStatus, wallet, MPC_CONTRACT } }) {
+export function EthereumView({ props: {
+  setStatus,
+  wallet,
+  MPC_CONTRACT,
+  requestSignatureTxHash,
+} }) {
 
   const [receiver, setReceiver] = useState("0xe0f3B7e68151E9306727104973752A415c2bcbEb");
   const [amount, setAmount] = useState(0.01);
@@ -33,21 +38,14 @@ export function EthereumView({ props: { setStatus, wallet, MPC_CONTRACT } }) {
 
   async function chainSignature() {
     setStatus('🏗️ Creating transaction');
-    const { transaction, payload } = await Eth.createPayload(senderAddress, "", amount);
-    console.log("tx", transaction)
-    console.log("payload", payload)
+    const { payload } = await Eth.createPayload(senderAddress);
 
     setStatus(`🕒 Asking ${MPC_CONTRACT} to sign the transaction, this might take a while`);
     try {
       const signedTransaction = await Eth.requestSignatureToMPC(
         wallet,
-        MPC_CONTRACT,
-        "test",
         payload,
-        transaction,
-        senderAddress
       );
-      console.log("signed tx", signedTransaction)
       setSignedTransaction(signedTransaction);
       setStatus(`✅ Signed payload ready to be relayed to the Ethereum network`);
       setStep('relay');
@@ -83,6 +81,28 @@ export function EthereumView({ props: { setStatus, wallet, MPC_CONTRACT } }) {
     await chainSignature();
     setLoading(false);
   }
+
+  useEffect(() => {
+    const getSignature = async () => {
+      const { transaction } = await Eth.createPayload(senderAddress);
+      const result = await wallet.getTransactionResult(requestSignatureTxHash)
+
+      if (
+        requestSignatureTxHash !== "" &&
+        transaction !== null &&
+        senderAddress !== "" &&
+        wallet !== null
+      ) {
+        const signature = await Eth.buildSignature(wallet, result[0], result[1], transaction, senderAddress);
+      }
+    }
+    getSignature()
+  }, [
+    requestSignatureTxHash,
+    senderAddress,
+    wallet,
+    amount
+  ])
 
   return (
     <>
@@ -120,5 +140,6 @@ EthereumView.propTypes = {
     setStatus: PropTypes.func.isRequired,
     wallet: PropTypes.object.isRequired,
     MPC_CONTRACT: PropTypes.string.isRequired,
+    requestSignatureTxHash: PropTypes.string,
   }).isRequired
 };
