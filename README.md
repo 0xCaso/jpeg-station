@@ -1,4 +1,6 @@
-# NEAR Multichain Examples w/ Chain Signatures
+# JPEG Station
+
+This concept enables cross-chain swaps between Ethereum NFTs and Bitcoin Ordinals leveraging NEAR Chain Abstraction.
 
 ![alpha badge](https://img.shields.io/badge/status-alpha-red)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](https://github.com/near-examples/near-multichain/pulls)
