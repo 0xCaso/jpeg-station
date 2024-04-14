@@ -102,7 +102,7 @@ function App() {
     <>
       <Navbar wallet={wallet} isSignedIn={isSignedIn}></Navbar>
 
-      <div className="container-fluid py-5 px-4" style={{backgroundColor: "#C7FF02", minHeight: "60vh"}}>
+      <div className="container-fluid py-8 px-4" style={{backgroundColor: "#C7FF02", minHeight: "50vh"}}>
         <div className="row">
           <div className="col-6 text-center align-middle text-black">
             <h1 style={{fontFamily: "Space Grotesk Variable", fontSize: "4.5rem" }}>
@@ -116,7 +116,7 @@ function App() {
         </div>
       </div>
 
-      <div className="container-sm mt-5 px-4">
+      <div className="container-sm my-5 px-4">
         <div className="row">
           {/* <!-- List of orders --> */}
           <div className="col-6 bg-black">
@@ -268,6 +268,7 @@ function App() {
           <span> {status} </span>
         </div>
       </div>
+      
       <Footer />
     </>
   )
